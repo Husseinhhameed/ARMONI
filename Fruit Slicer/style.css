@@ -1,0 +1,135 @@
+html {
+  height: 100%;
+  background-color: black;
+  background-size: cover;
+  font-family: cursive, sans-serif;
+}
+#container {
+  width: 90%;
+  height: 600px;
+  margin: 10px auto;
+  padding: 20px;
+  border-radius: 10px;
+  position: relative;
+}
+
+#front {
+  font-size: 40px;
+  color: #d3901d;
+  width: 650px;
+  height: 450px;
+  padding: 10px;
+  margin: 30px auto 20px auto;
+  z-index: 2;
+  display: none;
+}
+#front img {
+  width: 280px;
+}
+#instructions {
+  width: 450px;
+  height: 50px;
+  margin: 10px auto;
+  font-size: 30px;
+
+  background-color: #d3901d;
+  color: #2e1d11;
+  text-align: center;
+  line-height: 50px;
+  border-radius: 20px;
+  box-shadow: 0px 4px 0px 0px #775012;
+}
+#fruitcontainer {
+  background: url(https://raw.githubusercontent.com/Saumya-07/Fruit-Slicer/master/images/wood-bg2.jpg);
+  background-size: cover;
+  width: 90%; /* Set width to 90% of the screen */
+  height: 450px;
+  padding: 10px;
+  margin: 30px auto 20px auto;
+  background-color: white;
+  color: black;
+  text-align: center;
+  font-family: cursive, sans-serif;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 2px solid silver; /* Silver border */
+  box-shadow: 0px 4px 10px rgba(192, 192, 192, 0.5); /* Silver box shadow */
+  position: relative;
+}
+
+
+.fruit {
+  display: none;
+  position: absolute;
+}
+#score {
+  display: none;
+}
+.scoreDisplay {
+  z-index: 1;
+  display: flex;
+  background-color: transparent;
+  color: #888e61;
+  position: absolute;
+  font-size: 30px;
+  justify-items: center;
+}
+
+#score img {
+  width: 40px;
+  align-items: center;
+  padding-right: 5px;
+}
+#trialsleft {
+  margin-top: 7px;
+  display: flex;
+  position: absolute;
+  left: 550px;
+  background-color: transparent;
+  z-index: 1;
+}
+.life {
+  width: 30px;
+  padding-right: 5px;
+}
+
+#startReset {
+  position: relative;
+  width: 120px; /* Adjust width as needed */
+  padding: 10px;
+  margin: 20px auto; /* Center the button */
+  cursor: pointer;
+  text-align: center;
+  background-color: #4CAF50; /* Modern green color */
+  color: white;
+  border: none;
+  border-radius: 15px; /* Rounded corners */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  transition: all 0.3s ease; /* Smooth transition */
+}
+
+#startReset:hover {
+  background-color: #45a049; /* Slightly darker green on hover */
+}
+
+#startReset:active {
+  background-color: #3e8e41; /* Even darker green when clicked */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); /* Reduced shadow */
+  top: 2px; /* Slightly move down on click */
+}
+
+
+#gameOver {
+  box-sizing: border-box;
+  width: 500px;
+  height: 300px;
+  background: transparent;
+  color: #d3901d;
+  text-transform: upperCase;
+  text-align: center;
+  font-size: 3em;
+  position: absolute;
+  top: 170px;
+  left: 150px;
+  z-index: 2;
+}

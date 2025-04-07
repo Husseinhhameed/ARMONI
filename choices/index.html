@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Choice</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://public.codepenassets.com/css/reset-2.0.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap">
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    body {
+      font-family: 'Ubuntu', sans-serif;
+    }
+    .card {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="title">Choose a game mode</h1>
+  <div id="app" class="container">
+    <card data-image="/choices/1.jpg" onclick="location.href='/find/2.html'">
+      <h1 slot="header">WildSeek</h1>
+      <p slot="content">Search and find the hidden animals in a jungle scene</p>
+    </card>
+    <card data-image="/choices/2.jpg" onclick="location.href='/find/1.html'">
+      <h1 slot="header">PickPet</h1>
+      <p slot="content">Identify the target animal from a set of images</p>
+    </card>
+  </div>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.1/vue.min.js'></script>
+  <script src="./script.js"></script>
+</body>
+</html>

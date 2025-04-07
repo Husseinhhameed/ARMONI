@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> Line Tracing Game </title>
+  <style>
+    html, body {
+      margin: 0; 
+      padding: 0; 
+      overflow: hidden; 
+      touch-action: none;
+      width: 100%; 
+      height: 100%;
+      background: #000;
+      font-family: Arial, sans-serif;
+      position: relative;
+    }
+
+    /* Canvas occupies full screen */
+    #gameCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    /* Pop-up message styling */
+    #message {
+      font-size: 2em;
+      font-weight: bold;
+      text-align: center;
+      position: fixed;
+      width: 100%;
+      top: 20%;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      transform: translateY(-20px);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      z-index: 10;
+    }
+    #message.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Restart button styling */
+    #restartBtn {
+      display: none;
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      padding: 15px 30px;
+      font-size: 1.2em;
+      background: linear-gradient(45deg, #2196F3, #0D47A1);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(33,150,243,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+      z-index: 10;
+    }
+    #restartBtn:hover {
+      transform: translateX(-50%) scale(1.05);
+      box-shadow: 0 6px 20px rgba(33,150,243,0.6);
+    }
+
+    /* Progress bar container */
+    #progressContainer {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 10px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 5px;
+      overflow: hidden;
+      z-index: 10;
+    }
+    /* Actual progress bar */
+    #progressBar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #00e676, #1b5e20);
+      transition: width 0.1s;
+    }
+
+    /* Tutorial overlay */
+    #tutorialOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      z-index: 999;
+    }
+    #tutorialContent {
+      max-width: 600px;
+      margin: auto;
+    }
+    #closeTutorialBtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      background: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+  </style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+
+<!-- UI Elements -->
+<div id="message"></div>
+<div id="progressContainer">
+  <div id="progressBar"></div>
+</div>
+<button id="restartBtn" onclick="game.restart()">Try Again</button>
+
+<!-- Tutorial Overlay -->
+<div id="tutorialOverlay">
+  <div id="tutorialContent">
+    <h1>Welcome to Line Tracing!</h1>
+    <p>
+      Use your mouse (or finger on touch devices) to trace the white path from 
+      <strong>Start</strong> to <strong>End</strong>. 
+      Stay within the path to succeed. Watch the progress bar at the top to track your progress.
+    </p>
+    <button id="closeTutorialBtn">Start Game</button>
+  </div>
+</div>
+
+<script>
+class Game {
+    constructor() {
+        this.canvas = document.getElementById('gameCanvas');
+        this.ctx = this.canvas.getContext('2d');
+
+        this.messageElement = document.getElementById('message');
+        this.restartBtn = document.getElementById('restartBtn');
+        this.tutorialOverlay = document.getElementById('tutorialOverlay');
+        this.closeTutorialBtn = document.getElementById('closeTutorialBtn');
+
+        this.progressBar = document.getElementById('progressBar');
+
+        this.init();
+    }
+
+    init() {
+        this.isDrawing = false;
+        this.pathPoints = [];
+        this.userPoints = [];
+
+        this.pathWidth = 12;
+        this.userPathWidth = 8;
+
+        // For color-coding the user line based on distance
+        this.userStrokeColor = 'rgba(100,200,255,0.9)';
+
+        // We'll vibrate once in a while if user goes off track (mobile support)
+        this.lastVibrateTime = 0;
+
+        this.animationFrame = null;
+        this.resizeCanvas();
+
+        window.addEventListener('resize', this.resizeCanvas.bind(this));
+        this.initEventListeners();
+        
+        // Close tutorial overlay
+        this.closeTutorialBtn.addEventListener('click', () => {
+            this.tutorialOverlay.style.display = 'none';
+            this.restart(); // Start the game after tutorial
+        });
+    }
+
+    resizeCanvas() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+
+        // Increase this multiplier for a bigger "error margin"
+        this.maxDeviation = Math.min(this.canvas.width, this.canvas.height) * 0.08;
+
+        // Just keep references for width/height
+        this.width = this.canvas.width;
+        this.height = this.canvas.height;
+    }
+
+    initEventListeners() {
+        const events = {
+            touchstart: this.handleStart.bind(this),
+            touchmove: this.handleMove.bind(this),
+            touchend: this.handleEnd.bind(this),
+            mousedown: this.handleStart.bind(this),
+            mousemove: this.handleMove.bind(this),
+            mouseup: this.handleEnd.bind(this),
+        };
+        Object.entries(events).forEach(([event, handler]) => {
+            this.canvas.addEventListener(event, handler);
+        });
+    }
+
+    generatePath() {
+        this.pathPoints = [];
+        const start = { x: this.width / 2, y: this.height * 0.1 };
+        const end   = { x: this.width / 2, y: this.height * 0.9 };
+
+        let current = { ...start };
+        this.pathPoints.push(current);
+
+        // Generate path with random x-shifts, clamped within canvas
+        while (current.y < end.y) {
+            let nextX = current.x + (Math.random() - 0.5) * (this.width * 0.15);
+            const margin = this.width * 0.05;
+            nextX = Math.max(margin, Math.min(nextX, this.width - margin));
+
+            current = {
+                x: nextX,
+                y: current.y + (this.height * 0.03)
+            };
+            this.pathPoints.push(current);
+        }
+
+        // Optionally, smooth the path
+        this.smoothPath(2);
+
+        // Calculate total path length for progress calculation
+        this.totalPathLength = this.computePathLength(this.pathPoints);
+    }
+
+    smoothPath(iterations) {
+        for (let k = 0; k < iterations; k++) {
+            for (let i = 1; i < this.pathPoints.length - 1; i++) {
+                const prev = this.pathPoints[i - 1];
+                const curr = this.pathPoints[i];
+                const next = this.pathPoints[i + 1];
+                curr.x = (prev.x + curr.x + next.x) / 3;
+                curr.y = (prev.y + curr.y + next.y) / 3;
+            }
+        }
+    }
+
+    computePathLength(points) {
+        let length = 0;
+        for (let i = 1; i < points.length; i++) {
+            const dx = points[i].x - points[i - 1].x;
+            const dy = points[i].y - points[i - 1].y;
+            length += Math.sqrt(dx*dx + dy*dy);
+        }
+        return length;
+    }
+
+    draw() {
+        // Animated background (simple radial gradient that shifts slightly)
+        const time = performance.now() * 0.0002;
+        const gradient = this.ctx.createRadialGradient(
+            this.width/2 + Math.sin(time)*50, 
+            this.height/2 + Math.cos(time)*50, 
+            100,
+            this.width/2, 
+            this.height/2, 
+            Math.max(this.width, this.height)
+        );
+        gradient.addColorStop(0, '#111');
+        gradient.addColorStop(0.5, '#000');
+        gradient.addColorStop(1, '#111');
+
+        this.ctx.fillStyle = gradient;
+        this.ctx.fillRect(0, 0, this.width, this.height);
+
+        // Draw the main path
+        if (this.pathPoints.length > 1) {
+            this.drawPath(this.pathPoints, {
+                color: 'rgba(255,255,255,0.9)',
+                width: this.pathWidth,
+                shadow: { color: 'rgba(255,255,255,0.5)', blur: 20 }
+            });
+        }
+
+        // ** Draw Start & End flags ** (on top of the path but under the user line)
+        this.drawFlag(this.pathPoints[0],  "Start",  "#4CAF50");
+        this.drawFlag(this.pathPoints[this.pathPoints.length - 1], "End", "#F44336");
+
+        // Draw user path
+        if (this.userPoints.length > 1) {
+            this.drawPath(this.userPoints, {
+                color: this.userStrokeColor,
+                width: this.userPathWidth,
+                shadow: { color: 'rgba(100,200,255,0.5)', blur: 15 }
+            });
+        }
+
+        // Request next frame
+        this.animationFrame = requestAnimationFrame(this.draw.bind(this));
+    }
+
+    drawPath(points, style) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) {
+            this.ctx.lineTo(points[i].x, points[i].y);
+        }
+        this.ctx.strokeStyle = style.color;
+        this.ctx.lineWidth = style.width;
+        this.ctx.lineJoin = 'round';
+        this.ctx.lineCap = 'round';
+
+        if (style.shadow) {
+            this.ctx.shadowColor = style.shadow.color;
+            this.ctx.shadowBlur = style.shadow.blur;
+        }
+        this.ctx.stroke();
+        this.ctx.shadowBlur = 0; // reset shadow
+    }
+
+    /**
+     * Draws a simple circular "flag" and label (e.g., for Start/End).
+     * @param {Object} point - {x, y} coordinates where the flag should be drawn.
+     * @param {String} label - Text to display, e.g. "Start" or "End".
+     * @param {String} color - Circle color, e.g. "#4CAF50".
+     */
+    drawFlag(point, label, color) {
+        // Draw circle
+        this.ctx.beginPath();
+        this.ctx.arc(point.x, point.y, 10, 0, 2 * Math.PI);
+        this.ctx.fillStyle = color;
+        this.ctx.fill();
+
+        // Draw text (slightly offset to the right)
+        this.ctx.fillStyle = '#fff';
+        this.ctx.font = 'bold 14px Arial';
+        this.ctx.textAlign = 'left';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText(label, point.x + 15, point.y);
+    }
+
+    // Gets the index of the path point closest to (x,y)
+    getClosestPathIndex(x, y) {
+        let minDist = Infinity;
+        let closestIndex = 0;
+        for (let i = 0; i < this.pathPoints.length; i++) {
+            const p = this.pathPoints[i];
+            const dist = Math.hypot(p.x - x, p.y - y);
+            if (dist < minDist) {
+                minDist = dist;
+                closestIndex = i;
+            }
+        }
+        return closestIndex;
+    }
+
+    // Updates progress bar based on how far the user is along the path
+    updateProgress(x, y) {
+        const closestIndex = this.getClosestPathIndex(x, y);
+        if (closestIndex <= 0) {
+            this.progressBar.style.width = '0%';
+            return;
+        }
+
+        // Sum distance from pathPoints[0] up to pathPoints[closestIndex]
+        let traveledDist = 0;
+        for (let i = 1; i <= closestIndex; i++) {
+            const dx = this.pathPoints[i].x - this.pathPoints[i - 1].x;
+            const dy = this.pathPoints[i].y - this.pathPoints[i - 1].y;
+            traveledDist += Math.sqrt(dx*dx + dy*dy);
+        }
+        const progressRatio = traveledDist / this.totalPathLength;
+        this.progressBar.style.width = (progressRatio * 100).toFixed(1) + '%';
+    }
+
+    checkDistance(x, y) {
+        // Find minimum distance to any point on the path
+        let minDist = Infinity;
+        for (let p of this.pathPoints) {
+            const dist = Math.hypot(p.x - x, p.y - y);
+            if (dist < minDist) minDist = dist;
+            if (minDist < this.maxDeviation) break; // small optimization
+        }
+        return minDist;
+    }
+
+    // Dynamically change user line color based on distance from path
+    getStrokeColor(distance) {
+        // If user is well within the path
+        if (distance < this.maxDeviation * 0.3) {
+            return '#4CAF50';  // green
+        }
+        // If user is near boundary but still in the path
+        else if (distance < this.maxDeviation) {
+            return '#FFEB3B';  // yellow
+        }
+        // If user is off track
+        else {
+            return '#F44336';  // red
+        }
+    }
+
+    showMessage(text, color = 'white') {
+        this.messageElement.textContent = text;
+        this.messageElement.style.color = color;
+        this.messageElement.classList.add('visible');
+        setTimeout(() => {
+            this.messageElement.classList.remove('visible');
+        }, 2000);
+    }
+
+    handleStart(event) {
+        event.preventDefault();
+        const pos = this.getPosition(event);
+
+        // Check if user is near the start
+        const startDist = Math.hypot(
+            this.pathPoints[0].x - pos.x,
+            this.pathPoints[0].y - pos.y
+        );
+
+        if (startDist < this.width * 0.1) {
+            this.isDrawing = true;
+            this.userPoints = [pos];
+
+            if (!this.animationFrame) {
+                this.animationFrame = requestAnimationFrame(this.draw.bind(this));
+            }
+        }
+    }
+
+    handleMove(event) {
+        if (!this.isDrawing) return;
+        event.preventDefault();
+
+        const pos = this.getPosition(event);
+        const dist = this.checkDistance(pos.x, pos.y);
+
+        // Update the user stroke color based on how close they are
+        this.userStrokeColor = this.getStrokeColor(dist);
+
+        // If user completely veers off track
+        if (dist > this.maxDeviation) {
+            this.showMessage('Stay on track!', '#ff4444');
+            // Optional haptic feedback if supported (vibrate once every 1s)
+            const now = performance.now();
+            if (navigator.vibrate && now - this.lastVibrateTime > 1000) {
+                navigator.vibrate(100);
+                this.lastVibrateTime = now;
+            }
+        } else {
+            // Add point to user path
+            this.userPoints.push(pos);
+            this.updateProgress(pos.x, pos.y);
+        }
+    }
+
+    handleEnd() {
+        if (!this.isDrawing) return;
+        this.isDrawing = false;
+
+        const lastPoint = this.userPoints[this.userPoints.length - 1];
+        if (!lastPoint) return;
+
+        const endPoint = this.pathPoints[this.pathPoints.length - 1];
+        const endDist = Math.hypot(endPoint.x - lastPoint.x, endPoint.y - lastPoint.y);
+
+        if (endDist < this.width * 0.1) {
+            this.showMessage('Excellent! You Succeeded!', '#4CAF50');
+        } else {
+            this.showMessage('Try Again!', '#ff4444');
+        }
+        this.restartBtn.style.display = 'block';
+    }
+
+    getPosition(event) {
+        const rect = this.canvas.getBoundingClientRect();
+        return {
+            x: (event.touches ? event.touches[0].clientX : event.clientX) - rect.left,
+            y: (event.touches ? event.touches[0].clientY : event.clientY) - rect.top
+        };
+    }
+
+    restart() {
+        // Regenerate path and reset everything
+        this.generatePath();
+        this.userPoints = [];
+        this.restartBtn.style.display = 'none';
+        this.progressBar.style.width = '0%';
+
+        // Cancel any ongoing animation frames and restart the draw loop
+        if (this.animationFrame) {
+            cancelAnimationFrame(this.animationFrame);
+            this.animationFrame = null;
+        }
+        this.animationFrame = requestAnimationFrame(this.draw.bind(this));
+    }
+}
+
+// Initialize the game
+const game = new Game();
+</script>
+</body>
+</html>

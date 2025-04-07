@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<v-app id="app">
+  <v-main>
+    <v-container class="back" fill-height fluid>
+      <v-row align="center" justify="center">
+        <v-col cols="12">
+          <v-dialog width="20%" v-model="alert">
+            <v-card>
+              <v-card-title>
+                Login
+              </v-card-title>
+              <v-card-text>
+                {{ log }}
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="black" @click="alert = false" dark>Ok</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-col>
+        <v-col cols="5">
+          <v-card class="card-login mx-a">
+            <v-card-title>Login</v-card-title>
+            <v-divider></v-divider>
+            <v-card-text class="pa-5">
+              <v-form @submit.prevent="sub">
+                <v-text-field
+                  color="black"
+                  v-model="login"
+                  label="User"
+                ></v-text-field>
+                <v-text-field
+                  color="black"
+                  v-model="password"
+                  label="Password"
+                  type="password"
+                ></v-text-field>
+                <v-btn class="black" type="submit" large dark>Let's go</v-btn>
+              </v-form>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-main>
+</v-app>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script src="./script.js"></script>
+</body>
+</html>

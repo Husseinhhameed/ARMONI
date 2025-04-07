@@ -1,0 +1,107 @@
+body {  
+    font-family: 'Poppins', sans-serif;
+    color: #FFFFFF;
+    background-color: #000000;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+h1 {
+    font-size: 36px;
+    margin-top: 10px;
+    color: #FFFFFF;
+}
+
+#scoreboard {
+    font-size: 20px;
+    margin: 10px;
+    color: #FFD700; /* Golden color for scoreboard */
+}
+
+#board {
+    width: 450px;
+    height: 450px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+    background-color: #222222;
+    border-radius: 10px;
+    box-shadow: 0px 6px 15px rgba(255, 255, 255, 0.2);
+}
+
+.square {
+    width: 140px;
+    height: 140px;
+    border: 2px solid #FFFFFF;
+    background-color: #f5f5f5;
+    font-size: 60px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 8px;
+    color: #000000;
+    box-shadow: 0px 4px 12px rgba(192, 192, 192, 0.8);
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.square:hover {
+    background-color: #ffffff;
+    transform: scale(1.05);
+}
+
+.square.played.x {
+    color: #FF0000; /* Red for X */
+    text-shadow: 0 0 10px #FF6666;
+}
+
+.square.played.o {
+    color: #0000FF; /* Blue for O */
+    text-shadow: 0 0 10px #6666FF;
+}
+
+.square.winning {
+    animation: winningGlow 1s infinite alternate;
+}
+
+@keyframes winningGlow {
+    from { box-shadow: 0 0 10px #FFD700; }
+    to { box-shadow: 0 0 20px #FFFF00; }
+}
+
+#restartButton {
+    display: block;
+    margin: 20px auto;
+    height: 40px;
+    width: 180px;
+    background-color: #FFFFFF;
+    border: 2px solid #000000;
+    border-radius: 40px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#restartButton:hover {
+    background-color: #222222;
+    color: #FFFFFF;
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    #board {
+        width: 300px;
+        height: 300px;
+    }
+    .square {
+        width: 90px;
+        height: 90px;
+        font-size: 40px;
+    }
+}

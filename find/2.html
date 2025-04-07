@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find the Objects</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', cursive;
+            background: rgb(0,0,0);
+            background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 34%, rgba(45,44,44,1) 66%, rgba(0,212,255,1) 100%);        }
+
+        .header {
+            background-color: #000000;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .target-objects {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px auto;
+            max-width: 800px;
+        }
+
+        .target-object {
+            width: 100px;
+            height: 100px;
+            border: 4px solid #ff6b6b;
+            border-radius: 15px;
+            margin: 5px;
+            background-color: white;
+        }
+
+        .game-area {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background-image: url('jungle.jpg'); /* Placeholder background image */
+            background-size: cover;
+            background-position: center;
+            -webkit-box-shadow: 0px 0px 34px 0px rgba(209,209,209,1);
+            -moz-box-shadow: 0px 0px 34px 0px rgba(209,209,209,1);
+            box-shadow: 0px 0px 34px 0px rgba(209,209,209,1);
+            margin: 10px auto;
+            max-width: 90%;
+        }
+
+        .game-item {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 3px solid #4ecdc500;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .game-item:hover {
+            transform: scale(1.1);
+        }
+
+        .found {
+            opacity: 0.5;
+            border-color: #ff0000;
+        }
+
+        .message {
+            text-align: center;
+            font-size: 24px;
+            color: #ffffff;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        
+        <div class="target-objects">
+            <div class="target-object" data-target="lion">
+                <img src="lion.png" alt="Lion" width="100" height="100">
+            </div>
+            <div class="target-object" data-target="bear">
+                <img src="bear.png" alt="Bear" width="100" height="100">
+            </div>
+            <div class="target-object" data-target="bunny">
+                <img src="bunny.png" alt="Bunny" width="100" height="100">
+            </div>
+            <div class="target-object" data-target="cat">
+                <img src="cat.png" alt="Cat" width="100" height="100">
+            </div>
+        </div>
+    </div>
+
+    <div class="message">Find the objects hidden in the background!</div>
+
+    <div class="game-area" id="gameArea"></div>
+
+    <script>
+        const targets = ['lion', 'bear', 'bunny', 'cat']; // The target objects
+        const totalItems = 4; // One for each target
+        let currentTargetIndex = 0;
+
+        function createGameArea() {
+            const gameArea = document.getElementById('gameArea');
+            
+            // Create target items (one for each target)
+            targets.forEach(target => {
+                const item = document.createElement('div');
+                item.className = 'game-item';
+                item.dataset.target = target;
+                // Position the item randomly within the game area
+                const top = Math.random() * 400 + 'px'; // Random top position
+                const left = Math.random() * 800 + 'px'; // Random left position
+                item.style.top = top;
+                item.style.left = left;
+                // Add the placeholder image (replace with the actual target images)
+                item.innerHTML = `<img src="${target}.png" alt="${target}" width="100" height="100">`;
+                gameArea.appendChild(item);
+            });
+
+            // Add event listeners to new items after they are created
+            document.querySelectorAll('.game-item').forEach(item => {
+                item.addEventListener('click', handleItemClick);
+            });
+        }
+
+        function handleItemClick(event) {
+            const item = event.target.closest('.game-item');
+            if (item.classList.contains('found')) return;
+
+            const currentTarget = targets[currentTargetIndex];
+            
+            if (item.dataset.target === currentTarget) {
+                item.classList.add('found');
+                currentTargetIndex++;
+                
+                if (currentTargetIndex === targets.length) {
+                    document.querySelector('.message').textContent = 
+                        'Congratulations! You found all the objects! 🎉';
+                } else {
+                    document.querySelector('.message').textContent = 
+                        `Great! Now find the ${targets[currentTargetIndex]}!`;
+                }
+            }
+        }
+
+        // Create game area on load
+        window.addEventListener('load', createGameArea);
+    </script>
+</body>
+</html>

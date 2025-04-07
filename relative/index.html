@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Relative Match Game</title>
+  <!-- Google Font for a modern look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --primary-color: #003366;
+      --secondary-color: #ffffff;
+      --accent-color: #00ccff;
+      --bg-gradient: linear-gradient(135deg, #000000, #003366);
+    }
+    /* RESET STYLES */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html,
+    body {
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+    }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-gradient);
+    }
+    .game-container {
+      position: relative;
+      width: 90%;
+      max-width: 800px;
+      height: 90vh;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+    }
+    .header {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    .scoreboard {
+      font-size: 1.5rem;
+      color: var(--accent-color);
+    }
+    /* Top image container */
+    .top-image-container {
+      width: 40%;
+      max-width: 400px;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .top-image-container:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+    }
+    .top-image-container img {
+      width: 90%;
+      height: 90%;
+      object-fit: contain;
+      border-radius: 15px;
+      transition: opacity 0.5s ease;
+      opacity: 1;
+    }
+    /* Bottom images styling */
+    .bottom-images {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .bottom-images img {
+      /* Each image takes roughly 30% of the container width minus gap */
+      width: calc((100% - 2rem) / 3);
+      max-width: 150px;
+      aspect-ratio: 1;
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease, opacity 0.5s ease;
+      border: 3px solid transparent;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .bottom-images img:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      border: 3px solid var(--secondary-color);
+    }
+    /* Message overlay styling */
+    .message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--secondary-color);
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+      padding: 1rem 2rem;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 10px;
+      opacity: 0;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .message.show {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+    /* Shatter animation for wrong selection */
+    @keyframes shatter {
+      0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 1;
+      }
+      50% {
+        transform: translate(20px, -20px) rotate(20deg);
+        opacity: 0.5;
+      }
+      100% {
+        transform: translate(40px, -40px) rotate(45deg);
+        opacity: 0;
+      }
+    }
+    .shatter {
+      animation: shatter 0.8s forwards;
+    }
+    /* Particle effect styling */
+    .particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: var(--secondary-color);
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 1;
+      animation: particleAnim 1s ease-out forwards;
+    }
+    @keyframes particleAnim {
+      100% {
+        transform: translate(var(--tx), var(--ty));
+        opacity: 0;
+      }
+    }
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 600px) {
+      .top-image-container {
+        width: 70%;
+      }
+      .bottom-images img {
+        width: calc((100% - 1rem) / 3);
+        max-width: 100px;
+      }
+      .scoreboard {
+        font-size: 1.2rem;
+      }
+      .message {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <!-- Only the scoreboard is shown in the header -->
+    <div class="header">
+      <div class="scoreboard">Score: <span id="score">0</span></div>
+    </div>
+    <div class="top-image-container">
+      <img id="shadowImage" src="" alt="Shadow Image" />
+    </div>
+    <div class="bottom-images">
+      <img id="choice1" src="" alt="Choice 1" />
+      <img id="choice2" src="" alt="Choice 2" />
+      <img id="choice3" src="" alt="Choice 3" />
+    </div>
+    <div id="message" class="message"></div>
+  </div>
+
+  <script>
+    // Image pairs: Replace these with your actual image paths.
+    const imagePairs = [
+      { shadow: "1s.png", normal: "1.jpg" },
+      { shadow: "2s.png", normal: "2.jpg" },
+      { shadow: "3s.png", normal: "3.jpg" },
+    ];
+
+    const shadowImage = document.getElementById("shadowImage");
+    const choices = [
+      document.getElementById("choice1"),
+      document.getElementById("choice2"),
+      document.getElementById("choice3"),
+    ];
+    const messageEl = document.getElementById("message");
+    const gameContainer = document.querySelector(".game-container");
+    const scoreEl = document.getElementById("score");
+    let score = 0;
+
+    // Helper function for smooth fade transitions.
+    function fadeTransitionUpdate(element, newSrc) {
+      element.style.opacity = 0;
+      setTimeout(() => {
+        element.src = newSrc;
+        element.style.opacity = 1;
+      }, 300);
+    }
+
+    function initGame() {
+      // Clear current images for a smooth transition.
+      fadeTransitionUpdate(shadowImage, "");
+      choices.forEach((choice) => {
+        fadeTransitionUpdate(choice, "");
+      });
+
+      setTimeout(() => {
+        // Select a random correct image pair.
+        const correctIndex = Math.floor(Math.random() * imagePairs.length);
+        const correctPair = imagePairs[correctIndex];
+        fadeTransitionUpdate(shadowImage, correctPair.shadow);
+
+        // Get two other distinct indices for wrong choices.
+        let otherIndices = [...Array(imagePairs.length).keys()].filter(
+          (i) => i !== correctIndex
+        );
+        shuffleArray(otherIndices);
+        const [wrongIndex1, wrongIndex2] = otherIndices;
+
+        // Build the bottom options array.
+        let bottomOptions = [
+          { ...correctPair, isCorrect: true },
+          { ...imagePairs[wrongIndex1], isCorrect: false },
+          { ...imagePairs[wrongIndex2], isCorrect: false },
+        ];
+
+        // Shuffle so the correct option appears in a random position.
+        shuffleArray(bottomOptions);
+
+        choices.forEach((choice, idx) => {
+          fadeTransitionUpdate(choice, bottomOptions[idx].normal);
+          choice.dataset.correct = bottomOptions[idx].isCorrect;
+          choice.onclick = handleChoiceClick;
+        });
+
+        showMessage("");
+      }, 300);
+    }
+
+    function handleChoiceClick() {
+      if (this.dataset.correct === "true") {
+        showMessage("Correct!");
+        score++;
+        scoreEl.textContent = score;
+        // Create particle effect at the center.
+        const rect = gameContainer.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        createParticles(centerX, centerY);
+        setTimeout(initGame, 1000);
+      } else {
+        showMessage("Try again!");
+        // Apply shatter animation to the wrong selection.
+        this.classList.add("shatter");
+        this.addEventListener(
+          "animationend",
+          () => {
+            this.classList.remove("shatter");
+          },
+          { once: true }
+        );
+        setTimeout(() => showMessage(""), 800);
+      }
+    }
+
+    // Fisher-Yates shuffle algorithm.
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    // Show or hide the overlay message.
+    function showMessage(msg) {
+      messageEl.textContent = msg;
+      if (msg) {
+        messageEl.classList.add("show");
+      } else {
+        messageEl.classList.remove("show");
+      }
+    }
+
+    // Create a particle explosion effect.
+    function createParticles(x, y) {
+      const particleCount = 30;
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement("div");
+        particle.classList.add("particle");
+        const angle = Math.random() * 2 * Math.PI;
+        const distance = 100 + Math.random() * 100;
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance;
+        particle.style.setProperty("--tx", tx + "px");
+        particle.style.setProperty("--ty", ty + "px");
+        particle.style.left = x + "px";
+        particle.style.top = y + "px";
+        document.body.appendChild(particle);
+        particle.addEventListener("animationend", () => {
+          particle.remove();
+        });
+      }
+    }
+
+    // Start the game.
+    initGame();
+  </script>
+</body>
+</html>

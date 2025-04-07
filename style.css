@@ -1,0 +1,44 @@
+html, body{
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+.back{
+  background-image: url('./bg.png');
+  background-size:cover;
+  background-repeat: no-repeat;
+}
+
+@keyframes opacity-in {
+  from {opacity: 0.4;}
+  to {opacity: 1;}
+}
+
+@keyframes opacity-out {
+  from {opacity: 1;}
+  to {opacity: 0.4;}
+}
+
+.card-login{
+  opacity: 0.4;
+  animation-name: opacity-out;
+  animation-duration: 2s;
+}
+
+.card-login:hover{
+  opacity: 1;
+  animation-name: opacity-in;
+  animation-duration: 2s;
+}
+
+.alert-in{
+  animation-name: opacity-in;
+  animation-duration: 2s;
+}
+
+.v-btn:hover {
+  background-color: #000000; /* Darker green color */
+  transform: scale(1.1); /* Slightly enlarge the button */
+  transition: transform 0.3s ease, background-color 0.3s ease; /* Smooth effect */
+}

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Find the Difference Game</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgb(0,0,0);
+            background: linear-gradient(285deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 32%, rgba(6,6,6,1) 41%, rgba(86,106,110,1) 100%);            font-family: 'Arial', sans-serif;
+        }
+
+        .game-container {
+            display: flex;
+            gap: 20px;
+            height: 80vh;
+            padding: 20px;
+        }
+
+        .game-screen {
+            width: 45vw;
+            height: 100%;
+            position: relative;
+            background-image: url('bg.jpg');
+            background-size: cover;
+            -webkit-box-shadow: 0px 0px 9px 0px rgba(240,237,240,1);
+-moz-box-shadow: 0px 0px 9px 0px rgba(240,237,240,1);
+box-shadow: 0px 0px 9px 0px rgba(240,237,240,1);            border-radius: 10px;
+        }
+
+        .object {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            background-size: contain;
+            transition: transform 0.2s;
+        }
+
+        .object:hover {
+            transform: scale(1.1);
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .success {
+            background-color: #bbf7d0;
+            border: 2px solid #16a34a;
+            color: #166534;
+        }
+
+        .error {
+            background-color: #fecaca;
+            border: 2px solid #dc2626;
+            color: #991b1b;
+        }
+
+        @keyframes slideDown {
+            from { top: -50px; }
+            to { top: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <h1 style="margin: 20px; color: white; font-size: 2.5rem;">
+        Find the Moving Object!
+      </h1>
+          <div class="game-container">
+        <div class="game-screen" id="screen1"></div>
+        <div class="game-screen" id="screen2"></div>
+    </div>
+    <div class="message" id="message"></div>
+
+    <script>
+        const objects = [
+            { id: 1, image: '1.png' },
+            { id: 2, image: '2.png' },
+            { id: 3, image: '3.png' },
+            { id: 4, image: '4.png' }
+        ];
+
+        let correctObjectId;
+        let basePositions = {};
+
+        function initializeGame() {
+            // Clear screens
+            document.getElementById('screen1').innerHTML = '';
+            document.getElementById('screen2').innerHTML = '';
+            document.getElementById('message').style.display = 'none';
+
+            // Generate base positions for all objects
+            const screen = document.getElementById('screen1');
+            const screenWidth = screen.offsetWidth;
+            const screenHeight = screen.offsetHeight;
+            
+            objects.forEach(obj => {
+                basePositions[obj.id] = {
+                    x: Math.random() * (screenWidth - 100) + 10,
+                    y: Math.random() * (screenHeight - 100) + 10
+                };
+            });
+
+            // Randomly select which object will move
+            correctObjectId = objects[Math.floor(Math.random() * 4)].id;
+
+            // Create objects for both screens
+            objects.forEach(obj => {
+                createObject('screen1', obj, false);
+                createObject('screen2', obj, obj.id === correctObjectId);
+            });
+        }
+
+        function getQuadrant(x, y, screenWidth, screenHeight) {
+            const isLeft = x < screenWidth / 2;
+            const isTop = y < screenHeight / 2;
+            if (isLeft && isTop) return 'top-left';
+            if (!isLeft && isTop) return 'top-right';
+            if (isLeft && !isTop) return 'bottom-left';
+            return 'bottom-right';
+        }
+
+        function createObject(screenId, obj, isMoved) {
+            const screen = document.getElementById(screenId);
+            const screenWidth = screen.offsetWidth;
+            const screenHeight = screen.offsetHeight;
+            const element = document.createElement('div');
+            element.className = 'object';
+            element.style.backgroundImage = `url(${obj.image})`;
+
+            let posX, posY;
+            
+            if (isMoved) {
+                // Get original position
+                const originalX = basePositions[obj.id].x;
+                const originalY = basePositions[obj.id].y;
+                
+                // Determine original quadrant
+                const originalQuadrant = getQuadrant(originalX, originalY, screenWidth, screenHeight);
+                
+                // Generate new quadrant different from original
+                let newQuadrant;
+                do {
+                    const quadrants = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
+                    newQuadrant = quadrants[Math.floor(Math.random() * 4)];
+                } while (newQuadrant === originalQuadrant);
+
+                // Calculate new position boundaries based on quadrant
+                let minX, maxX, minY, maxY;
+                switch(newQuadrant) {
+                    case 'top-left':
+                        minX = 10;
+                        maxX = screenWidth/2 - 90;
+                        minY = 10;
+                        maxY = screenHeight/2 - 90;
+                        break;
+                    case 'top-right':
+                        minX = screenWidth/2 + 10;
+                        maxX = screenWidth - 90;
+                        minY = 10;
+                        maxY = screenHeight/2 - 90;
+                        break;
+                    case 'bottom-left':
+                        minX = 10;
+                        maxX = screenWidth/2 - 90;
+                        minY = screenHeight/2 + 10;
+                        maxY = screenHeight - 90;
+                        break;
+                    case 'bottom-right':
+                        minX = screenWidth/2 + 10;
+                        maxX = screenWidth - 90;
+                        minY = screenHeight/2 + 10;
+                        maxY = screenHeight - 90;
+                        break;
+                }
+
+                posX = Math.random() * (maxX - minX) + minX;
+                posY = Math.random() * (maxY - minY) + minY;
+            } else {
+                // Use original position
+                posX = basePositions[obj.id].x;
+                posY = basePositions[obj.id].y;
+            }
+
+            // Boundary checks
+            posX = Math.max(10, Math.min(posX, screenWidth - 90));
+            posY = Math.max(10, Math.min(posY, screenHeight - 90));
+
+            element.style.left = `${posX}px`;
+            element.style.top = `${posY}px`;
+
+            element.addEventListener('click', () => handleClick(obj.id, screenId));
+            element.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                handleClick(obj.id, screenId);
+            });
+
+            screen.appendChild(element);
+        }
+
+        function handleClick(objectId, screenId) {
+            if (screenId !== 'screen2') return;
+
+            const message = document.getElementById('message');
+            if (objectId === correctObjectId) {
+                message.textContent = '🎉 Correct! Well done!';
+                message.className = 'message success';
+                setTimeout(initializeGame, 1500);
+            } else {
+                message.textContent = '❌ Try again!';
+                message.className = 'message error';
+            }
+            message.style.display = 'block';
+        }
+
+        // Initialize game on load and window resize
+        window.addEventListener('load', initializeGame);
+        window.addEventListener('resize', initializeGame);
+    </script>
+</body>
+</html>

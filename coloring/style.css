@@ -1,0 +1,109 @@
+body {
+    font-family: 'Roboto', sans-serif; /* Use a modern font */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.project-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 5% auto;
+    width: 90%;
+    max-width: 1200px;
+    justify-content: space-around;
+    align-items: center;
+}
+
+h2 {
+    margin: 0;
+    padding: 0.5em 0;
+}
+h3 {
+    display: none;
+}
+.content-field-container,
+.color-splotch-container {
+    margin: 2%;
+    padding: 2%;
+    border-right: 2px dashed #ccc;
+}
+
+.color-splotch-container {
+    column-count: 2;
+}
+
+.color-splotch {
+    width: 80px;
+    height: 80px;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    background-color: aliceblue;
+    margin: 5%;
+    cursor: pointer;
+    transition: transform 0.3s, border-color 0.3s;
+}
+
+.color-splotch:hover {
+    border-color: #333;
+    transform: scale(1.1);
+}
+
+.cat-illustration-svg-wrapper {
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+}
+
+.cat-illustration-1 {
+    fill: white;
+    stroke: #231f20;
+    stroke-miterlimit: 10;
+    cursor: pointer;
+    transition: stroke-width 0.3s;
+}
+
+.cat-illustration-1:hover {
+    stroke-width: 3px;
+}
+
+.cat-illustration-svg-wrapper button {
+    margin: 2% auto;
+    padding: 0.5em 1em;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.cat-illustration-svg-wrapper button:hover {
+    background-color: #555;
+}
+
+.clear-button {
+    display: block;
+    margin: 10px auto;
+    padding: 0.5em 1em;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .clear-button:hover {
+    background-color: #555;
+  }
+  
+  .color-name {
+    font-size: 1em; /* Initial font size */
+    transition: font-size 0.3s ease-in-out; /* Animation effect */
+  }
+  
+  .color-name.active {
+    font-size: 1.5em; /* Enlarged font size */
+  }
+  

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find the Objects</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(to bottom, #000000, #001f3d); /* Black to Dark Blue gradient */
+
+        }
+
+        .header {
+            background-color: #000000;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .target-objects {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px auto;
+            max-width: 800px;
+        }
+
+        .target-object {
+            width: 100px;
+            height: 100px;
+            border: 4px solid #ff6b6b;
+            border-radius: 15px;
+            margin: 5px;
+            background-color: white;
+        }
+
+        .game-area {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 30px;
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 1000px;
+        }
+
+        .game-item {
+            width: 100px;
+            height: 100px;
+            border: 3px solid #4ecdc4;
+            border-radius: 10px;
+            background-color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .game-item:hover {
+            transform: scale(1.1);
+        }
+
+        .found {
+            opacity: 0.5;
+            border-color: #2ecc71;
+        }
+
+        .message {
+            text-align: center;
+            font-size: 24px;
+            color: #ffffff;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+\        <div class="target-objects">
+            <div class="target-object" data-target="1">
+                <img src="lion.png" alt="Target 1" width="100" height="100">
+            </div>
+            <div class="target-object" data-target="2">
+                <img src="bear.png" alt="Target 2" width="100" height="100">
+            </div>
+            <div class="target-object" data-target="3">
+                <img src="bunny.png" alt="Target 3" width="100" height="100">
+            </div>
+            <div class="target-object" data-target="4">
+                <img src="cat.png" alt="Target 4" width="100" height="100">
+            </div>
+        </div>
+    </div>
+
+    <div class="message">Find the objects shown above!</div>
+
+    <div class="game-area" id="gameArea"></div>
+
+    <script>
+        const targets = ['lion', 'bear', 'bunny', 'cat']; // Updated to match your image filenames
+        const decoyImages = ['monkey.png', 'mouse.png', 'robin.png', 'tiger.png']; // Array of decoy images
+        let currentTargetIndex = 0;
+        const totalItems = 18; // Total items in game area
+
+        function createGameArea() {
+            const gameArea = document.getElementById('gameArea');
+            
+            // Create target items (3 copies of each)
+            targets.forEach(target => {
+                for (let i = 0; i < 3; i++) {
+                    const item = document.createElement('div');
+                    item.className = 'game-item';
+                    item.dataset.target = target;
+                    // Use the target image filenames directly
+                    item.innerHTML = `<img src="${target}.png" alt="${target}" width="100" height="100">`;
+                    gameArea.appendChild(item);
+                }
+            });
+
+            // Fill remaining spots with decoys (random decoy images)
+            const remainingSpots = totalItems - (targets.length * 3);
+            for (let i = 0; i < remainingSpots; i++) {
+                const decoy = document.createElement('div');
+                decoy.className = 'game-item';
+                decoy.dataset.target = 'decoy';
+                const randomDecoy = decoyImages[Math.floor(Math.random() * decoyImages.length)]; // Random decoy image
+                decoy.innerHTML = `<img src="${randomDecoy}" alt="Decoy" width="100" height="100">`; // Randomized decoy image
+                gameArea.appendChild(decoy);
+            }
+
+            // Shuffle game area
+            for (let i = gameArea.children.length; i >= 0; i--) {
+                gameArea.appendChild(gameArea.children[Math.random() * i | 0]);
+            }
+
+            // Add event listeners to new items after they are created
+            document.querySelectorAll('.game-item').forEach(item => {
+                item.addEventListener('click', handleItemClick);
+            });
+        }
+
+        function handleItemClick(event) {
+            const item = event.target.closest('.game-item'); // Adjusted for image click
+            if (item.classList.contains('found')) return;
+
+            const currentTarget = targets[currentTargetIndex];
+            
+            if (item.dataset.target === currentTarget) {
+                item.classList.add('found');
+                currentTargetIndex++;
+                
+                if (currentTargetIndex === targets.length) {
+                    document.querySelector('.message').textContent = 
+                        'Congratulations! You found all the objects! 🎉';
+                } else {
+                    document.querySelector('.message').textContent = 
+                        `Great! Now find the ${targets[currentTargetIndex]}!`;
+                }
+            }
+        }
+
+        // Create game area on load
+        window.addEventListener('load', createGameArea);
+    </script>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Puzzle Game</title>
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --success: #00BF8E;
+            --error: #FF6584;
+            --background: #F9F7FE;
+        }
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: linear-gradient(to left bottom, #000000, #13040d, #1a0a1a, #191229, #0a1939);            margin: 0;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin: 2rem 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .puzzle-container {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .puzzle-canvas {
+            width: min(90vw, 500px);
+            height: min(90vw, 500px);
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drop-zone {
+            border: 3px solid var(--background);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .drop-zone::after {
+            content: "Drop Here";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--primary);
+            opacity: 0.3;
+            font-size: 1.2rem;
+            pointer-events: none;
+        }
+
+        .drop-zone:hover {
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        .puzzle-pieces {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: min(90vw, 500px);
+        }
+
+        .puzzle-piece {
+            width: 100%;
+            border-radius: 15px;
+            cursor: grab;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            aspect-ratio: 1;
+            object-fit: cover;
+        }
+
+        .puzzle-piece:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .puzzle-piece:active {
+            cursor: grabbing;
+        }
+
+        .correct {
+            border: 3px solid var(--success) !important;
+            animation: pop 0.4s ease;
+        }
+
+        .correct::after {
+            content: "✓";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: var(--success);
+            font-size: 1.5rem;
+            background: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .incorrect {
+            animation: shake 0.5s, error-flash 1.5s;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(10px); }
+            50% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes error-flash {
+            0% { border-color: var(--error); }
+            50% { border-color: transparent; }
+            100% { border-color: var(--error); }
+        }
+
+        .victory-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .victory-message {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            animation: pop 0.5s ease;
+        }
+
+        .victory-message h2 {
+            color: var(--success);
+            font-size: 2.5rem;
+            margin: 0 0 1rem;
+        }
+
+        .restart-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+                margin: 1rem 0;
+            }
+            
+            .puzzle-container {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="puzzle-container">
+        <div class="puzzle-canvas" id="canvas">
+            <div class="drop-zone" id="drop-1"></div>
+            <div class="drop-zone" id="drop-2"></div>
+            <div class="drop-zone" id="drop-3"></div>
+            <div class="drop-zone" id="drop-4"></div>
+        </div>
+        
+        <div class="puzzle-pieces">
+            <img src="part1.jpg" class="puzzle-piece" draggable="true" id="piece-1">
+            <img src="part2.jpg" class="puzzle-piece" draggable="true" id="piece-2">
+            <img src="part3.jpg" class="puzzle-piece" draggable="true" id="piece-3">
+            <img src="part4.jpg" class="puzzle-piece" draggable="true" id="piece-4">
+        </div>
+    </div>
+
+    <div class="victory-overlay" id="victoryOverlay">
+        <div class="victory-message">
+            <h2>🎉 You Did It! 🎉</h2>
+            <button class="restart-btn" onclick="location.reload()">Play Again!</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const pieces = document.querySelectorAll('.puzzle-piece');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            const victoryOverlay = document.getElementById('victoryOverlay');
+            let draggedPiece = null;
+
+            pieces.forEach(piece => {
+                piece.addEventListener('dragstart', handleDragStart);
+                piece.addEventListener('dragend', handleDragEnd);
+                piece.addEventListener('touchstart', handleTouchStart, { passive: true });
+                piece.addEventListener('touchend', handleTouchEnd, { passive: true });
+            });
+
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('drop', handleDrop);
+                zone.addEventListener('touchmove', handleTouchMove, { passive: false });
+                zone.addEventListener('touchend', handleTouchEnd);
+            });
+
+            function handleDragStart(e) {
+                draggedPiece = e.target;
+                e.target.classList.add('dragging');
+                setTimeout(() => {
+                    e.target.style.opacity = '0.5';
+                }, 0);
+            }
+
+            function handleDragEnd(e) {
+                e.target.style.opacity = '1';
+                e.target.classList.remove('dragging');
+            }
+
+            function handleTouchStart(e) {
+                draggedPiece = e.target;
+                e.target.style.opacity = '0.5';
+            }
+
+            function handleTouchEnd(e) {
+                if(draggedPiece) {
+                    draggedPiece.style.opacity = '1';
+                    draggedPiece = null;
+                }
+            }
+
+            function handleTouchMove(e) {
+                e.preventDefault();
+                if(!draggedPiece) return;
+                
+                const touch = e.touches[0];
+                const dropZone = document.elementFromPoint(touch.clientX, touch.clientY);
+                
+                if(dropZone && dropZone.classList.contains('drop-zone')) {
+                    handleDrop({ target: dropZone, preventDefault: () => {} });
+                }
+            }
+
+            function handleDragOver(e) {
+                e.preventDefault();
+            }
+
+            function handleDrop(e) {
+                e.preventDefault();
+                const dropZone = e.target.closest('.drop-zone');
+                
+                if (!dropZone || !draggedPiece) return;
+
+                const pieceNumber = draggedPiece.id.split('-')[1];
+                const zoneNumber = dropZone.id.split('-')[1];
+                
+                if (pieceNumber === zoneNumber) {
+                    dropZone.appendChild(draggedPiece);
+                    dropZone.classList.add('correct');
+                    dropZone.classList.remove('incorrect');
+                    draggedPiece.style.cursor = 'default';
+                    draggedPiece.draggable = false;
+                    
+                    // Check for victory
+                    if([...pieces].every(piece => !piece.draggable)) {
+                        victoryOverlay.style.display = 'flex';
+                    }
+                } else {
+                    dropZone.classList.add('incorrect');
+                    setTimeout(() => {
+                        dropZone.classList.remove('incorrect');
+                    }, 1500);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

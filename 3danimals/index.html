@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>3D Object Showcase</title>
+  <!-- Import Google Font for a modern look -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Imports model-viewer -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
+</head>
+<body>
+  <!-- Main Container -->
+  <div id="container">
+    
+    <!-- Aside container for the 3D object -->
+    <div id="aSide">
+      <model-viewer 
+          id="modelViewer" 
+          src="assets/dog.gltf" 
+          alt="3D Model" 
+          auto-rotate 
+          camera-orbit="0deg 90deg "
+          shadow-intensity="1" 
+          camera-controls 
+          ar 
+          ios-src="assets/fish.gltf">
+      </model-viewer>
+    </div>
+
+    <!-- Content container for text description, headline and button -->
+    <div id="content">
+      <h2 id="modelTitle">Happy Dog</h2>
+      <h3 id="modelSubtitle">Woof, Woof!</h3>
+      <p id="modelDescription"> This playful dog loves running, jumping, and playing fetch. It’s a loyal friend who adores belly rubs!</p>
+      <button id="shopButton">NEXT</button>
+    </div>
+
+ 
+
+  <!-- JavaScript to cycle models and update text -->
+  <script>
+    // Array holding model data – update file names and texts as needed.
+    const models = [
+
+    {
+        src: "assets/dog.gltf",
+        title: "Happy Dog",
+        subtitle: "Woof, Woof!",
+        description: "This playful dog loves running, jumping, and playing fetch. It’s a loyal friend who adores belly rubs!"
+      },
+      {
+        src: "assets/cat.gltf",
+        title: "Curious Cat",
+        subtitle: "Meow, Meow!",
+        description: "This curious cat loves to explore every nook and cranny. It’s soft, graceful, and full of surprises!"
+      },
+      {
+        src: "assets/deer.gltf",
+        title: "Graceful Deer",
+        subtitle: "Dancing Through the Forest",
+        description: "Meet our gentle deer friend! It gracefully prances through the forest, nibbling on fresh leaves and enjoying the peaceful woods. Its calm eyes and elegant leaps make every forest adventure magical."
+      },
+      {
+        src: "assets/pig.gltf",
+        title: "Cheerful Pig",
+        subtitle: "Oink, Oink, Let's Play!",
+        description: "This playful pig loves to roll in the mud and explore the farm with a happy oink. Always full of energy and fun, it's ready to make you smile with its silly antics!"
+      },
+      {
+        src: "assets/gan.gltf",
+        title: "Best Buddies",
+        subtitle: " Fun Friends Forever!",
+        description: "Watch as this adventurous girl and her loyal dog share giggles and playtime under the sunny sky. Their friendship is full of laughter, running, and endless fun—a perfect day with your best pal"
+      },
+      {
+        src: "assets/duck.gltf",
+        title: "Ducky Duck",
+        subtitle: "Quack, Quack!",
+        description: "This happy duck loves to splash in puddles and quack cheerfully. Watch its fun waddle as it explores!"
+      },
+      {
+        src: "assets/fish.gltf",
+        title: "Friendly Fish",
+        subtitle: "Swims in the Ocean!",
+        description: "This little fish loves to explore the deep blue sea. It zooms around and shows off its shiny scales!"
+      },
+    ];
+
+    let currentModelIndex = 0;
+    const modelViewer = document.getElementById('modelViewer');
+    const modelTitle = document.getElementById('modelTitle');
+    const modelSubtitle = document.getElementById('modelSubtitle');
+    const modelDescription = document.getElementById('modelDescription');
+    const shopButton = document.getElementById('shopButton');
+
+    function updateModel() {
+      // Calculate next model index (cycles back to the first after the last)
+      currentModelIndex = (currentModelIndex + 1) % models.length;
+      const modelData = models[currentModelIndex];
+
+      // Add slide-out animation to current model
+      modelViewer.classList.add('slide-out');
+
+      // When the slide-out animation ends, update the model and text, then slide in.
+      modelViewer.addEventListener('animationend', function handler() {
+        // Remove slide-out class
+        modelViewer.classList.remove('slide-out');
+
+        // Update the model source and text content
+        modelViewer.src = modelData.src;
+        modelViewer.setAttribute('ios-src', modelData.src);
+        modelTitle.textContent = modelData.title;
+        modelSubtitle.textContent = modelData.subtitle;
+        modelDescription.textContent = modelData.description;
+
+        // Add slide-in animation to bring the new model into view
+        modelViewer.classList.add('slide-in');
+
+        // Remove the slide-in class once its animation completes
+        modelViewer.addEventListener('animationend', function removeSlideIn() {
+          modelViewer.classList.remove('slide-in');
+          modelViewer.removeEventListener('animationend', removeSlideIn);
+        });
+
+        // Remove this handler to prevent multiple triggers
+        modelViewer.removeEventListener('animationend', handler);
+      });
+    }
+
+    // Attach the click event to the shop button
+    shopButton.addEventListener('click', updateModel);
+  </script>
+</body>
+</html>

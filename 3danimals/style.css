@@ -1,0 +1,122 @@
+/* Reset & General Styles */
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    box-sizing: border-box;
+  }
+  
+  /* Main Container with a modern dark-to-bright gradient */
+  #container {
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    background: linear-gradient(135deg, #000000, #ff6b6b);
+  }
+  
+  /* Content Container */
+  #content {
+    position: absolute;
+    left: 10%;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    max-width: 500px;
+  }
+  
+  #content h2 {
+    font-size: 48px;  /* smaller than the original */
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  
+  #content h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 400;
+    color: #ffcc00; /* a bright accent color */
+  }
+  
+  #content p {
+    font-size: 16px;
+    margin-bottom: 30px;
+    color: #ddd;
+  }
+  
+  #content button {
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    border-radius: 30px;
+    background: #070707;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  #content button:hover {
+    background: #ff8a8a;
+    transform: translateY(-3px);
+  }
+  
+  /* Social Media Icons placed at the bottom-left for a modern touch */
+  #icons {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    display: flex;
+    gap: 15px;
+  }
+  
+  #icons i {
+    font-size: 24px;
+    color: #fff;
+    transition: color 0.3s;
+    cursor: pointer;
+  }
+  
+  #icons i:hover {
+    color: #ff6b6b;
+  }
+  
+  /* Aside Container for the 3D Object */
+  #aSide {
+    position: absolute;
+    right: 10%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 600px;
+    height: 600px;
+    border-radius: 20px;
+    overflow: hidden;
+    
+  }
+  
+  #aSide model-viewer {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  
+  /* Animation Keyframes */
+  @keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(-100px); opacity: 0; }
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateX(100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  /* Animation Classes */
+  .slide-out {
+    animation: slideOut 0.5s forwards;
+  }
+  
+  .slide-in {
+    animation: slideIn 0.5s forwards;
+  }
+  

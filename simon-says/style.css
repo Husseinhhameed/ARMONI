@@ -1,0 +1,311 @@
+@import url(https://fonts.googleapis.com/css?family=Lilita+One&text=Sl%20m%20O%20n);
+@font-face {
+  font-family: Digital;
+  src: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/507450/digital-subset.ttf);
+}
+body {
+  background: #000000;
+  text-align: center;
+  font-family: helvetica;
+}
+
+#case {
+  padding-top: 18px;
+  height: 600px;
+  width: 600px;
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  margin-top: -300px;
+  left: 50%;
+  margin-left: -300px;
+  background: #1D1F20;
+  border-radius: 300px;
+  border: 12px solid tint(#1D1F20, 3%);
+  box-shadow: 1px -3px 25px rgba(165, 165, 165, 1);
+}
+
+::-moz-selection {
+  background: transparent;
+}
+
+::selection, ::-moz-selection {
+  background: transparent;
+}
+
+.btn.playbtn {
+  margin: 14px;
+  width: 252px;
+  height: 252px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 2px 2px 14px #000, -2px -2px 12px #000;
+}
+.btn.playbtn:active {
+  box-shadow: -2px -2px 12px #000;
+  width: 248px;
+  height: 248px;
+  margin: 16px;
+}
+.btn.playbtn.active > .lightbulb {
+  background: rgba(252, 249, 222, 0.3);
+  box-shadow: 0 0 140px #fff;
+}
+
+.innerbutton {
+  height: 300px;
+  width: 300px;
+  border-radius: 180px;
+  position: relative;
+  z-index: 100;
+  background: #fff;
+}
+
+.lightbulb {
+  height: 80px;
+  width: 80px;
+  border-radius: 40px;
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  z-index: 0;
+}
+
+#green {
+  border-radius: 260px 10px 160px 10px;
+  background: #00911C;
+  background: linear-gradient(135deg, #008219 0%, tint(#00911C, 30%) 100%);
+  border: 6px solid tint(#00911C, 20%);
+}
+#green .innerbutton {
+  background: tint(#00911C, 20%);
+  top: 92px;
+  left: 92px;
+}
+#green.active {
+  background: #35ff5c;
+  box-shadow: 0 0 20px #00911C;
+}
+
+#red {
+  background: #FE0111;
+  border-radius: 10px 260px 10px 160px;
+  border: 6px solid tint(#FE0111, 30%);
+  background: linear-gradient(135deg, #e5010f 0%, tint(#FE0111, 30%) 100%);
+}
+#red.active {
+  background: #ffa4a9;
+  box-shadow: 0 0 20px #FE0111;
+}
+
+#yellow {
+  background: #F1C200;
+  border-radius: 10px 160px 10px 260px;
+  border: 6px solid tint(#F1C200, 30%);
+  background: linear-gradient(135deg, #ecbe00 0%, tint(#F1C200, 20%) 100%);
+}
+#yellow .innerbutton {
+  background: tint(#F1C200, 30%);
+  bottom: 169px;
+  left: 92px;
+}
+#yellow.active {
+  background: #ffeda5;
+  box-shadow: 0 0 20px #F1C200;
+}
+#yellow.active > .lightbulb {
+  background: #fff2be;
+  box-shadow: 0 0 30px #fff4c8;
+}
+
+#blue {
+  background: #0065CA;
+  border-radius: 160px 10px 260px 10px;
+  border: 6px solid tint(#0065CA, 10%);
+  background: linear-gradient(135deg, #0058b1 0%, tint(#0065CA, 30%) 100%);
+}
+#blue .innerbutton {
+  background: tint(#0065CA, 10%);
+  bottom: 169px;
+  right: 182px;
+}
+#blue .lightbulb {
+  top: 90px;
+  left: 90px;
+}
+#blue.active {
+  background: #7ebeff;
+  box-shadow: 0 0 20px #0065CA;
+}
+#blue.active > .lightbulb {
+  background: #88c3ff;
+  box-shadow: 0 0 30px #97cbff;
+}
+
+#control {
+  height: 300px;
+  width: 300px;
+  position: absolute;
+  overflow: hidden;
+  top: 148px;
+  left: 148px;
+  z-index: 1000;
+  background: #f5f4f4;
+  border: 20px solid #1D1F20;
+  border-radius: 50%;
+}
+
+#brand, .detail {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  height: 250px;
+  width: 250px;
+  border-radius: 125px;
+  padding-top: 16px;
+  padding-left: 8px;
+  font-family: "Lilita One", sans-serif;
+  color: #f5f4f4;
+  font-size: 3.6em;
+  font-weight: 200;
+  background: #1D1F20;
+  text-shadow: -1px -1px #666;
+}
+#brand .detail, .detail .detail {
+  background: transparent;
+  border: 2px solid #f5f4f4;
+  height: 240px;
+  width: 240px;
+  top: 5px;
+  left: 5px;
+}
+#brand .tiny, .detail .tiny {
+  font-size: 0.3em;
+  margin-left: 3px;
+}
+#brand .large, .detail .large {
+  font-size: 1.33em;
+  margin-left: -9px;
+  margin-right: -13px;
+}
+
+#buttons {
+  position: absolute;
+  bottom: 0;
+  height: 160px;
+  width: 100%;
+  border-radius: 0 0 150px 150px;
+  background: #f5f6f6;
+  /* Old browsers */
+  background: linear-gradient(to bottom, #f5f6f6 0%, #dbdce2 21%, #dcdfed 39%, #dddfe3 80%, #f5f6f6 100%);
+}
+#buttons .label {
+  color: #1D1F20;
+}
+#buttons .col {
+  float: left;
+  width: 75px;
+}
+
+.display {
+  margin-left: 40px;
+  margin-top: 20px;
+}
+.display .label {
+  margin-left: -16px;
+}
+
+#display {
+  width: 60px;
+  height: 40px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: #430710;
+  border: 5px solid #1D1F20;
+  box-shadow: inset -1px -1px 0 #444;
+}
+
+#number {
+  color: #680b19;
+  font-size: 32px;
+  line-height: 24px;
+  font-family: Digital;
+  text-align: right;
+  margin: 3px;
+  float: right;
+}
+#number.on {
+  color: #DC0D29;
+}
+
+.roundbtn {
+  height: 30px;
+  width: 30px;
+  margin-top: 24px;
+  padding: 0;
+  border: 3px solid #1D1F20;
+  border-radius: 15px;
+  box-shadow: 1px 3px 2px #444, inset -1px -1px 0 #444;
+}
+
+#start {
+  background: #FE0111;
+}
+
+#strict {
+  background: yellow;
+  margin-top: 4px;
+}
+
+#strictlight {
+  height: 12px;
+  width: 12px;
+  margin-top: 7px;
+  margin-left: 29px;
+  border: 2px solid #1D1F20;
+  border-radius: 6px;
+  background: #430710;
+  box-shadow: inset -1px -1px 0 #666;
+}
+#strictlight.on {
+  background: #ac0a20;
+}
+
+.power {
+  padding-top: 20px;
+}
+
+.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-default, .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default, .bootstrap-switch .bootstrap-switch-label, .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary, .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-primary {
+  background-color: #e60000 !important;
+  background-image: none;
+  color: #FFF;
+  text-shadow: 0 -1px #1a0000;
+  padding: 0 8px;
+}
+.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-default:hover, .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default:hover, .bootstrap-switch .bootstrap-switch-label:hover, .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary:hover, .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-primary:hover {
+  background-color: #e60000;
+  color: #FFF;
+}
+
+.bootstrap-switch .bootstrap-switch-label, .bootstrap-switch.bootstrap-switch-focused {
+  border: 1px solid #000;
+  border-color: #777;
+  font-size: 21px;
+  box-shadow: 0 2px rgba(0, 0, 0, 0.4);
+}
+
+.drawer, .bootstrap-switch, .bootstrap-switch.bootstrap-switch-focused {
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  transition: none;
+  background: #ff1a1a;
+}
+
+.bootstrap-switch, .bootstrap-switch.bootstrap-switch-animate .bootstrap-switch-container {
+  background: #ff1a1a;
+  max-height: 25px;
+}
+
+.bootstrap-switch-handle-off {
+  width: 40px !important;
+}
