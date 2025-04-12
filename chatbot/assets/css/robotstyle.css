@@ -4,6 +4,36 @@
     --black: #1a1a1a;
 }
 
+.mic-btn.listening::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  background-color: rgba(255, 0, 0, 0.15);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse 1.2s infinite ease-in-out;
+  z-index: -1;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+}
+
+
 body.chat-open {
     .chat-window {
         display: flex;
@@ -40,7 +70,7 @@ body.chat-open {
     }
 
     display: none;
-    box-shadow: rgb(212, 212, 212) 0px 3px 8px;
+    box-shadow: rgb(0, 0, 0) 3px 4px 15px;
     
     border-radius: 20px;
     position: fixed; /* Use fixed to position it relative to the viewport */
@@ -66,99 +96,126 @@ body.chat-open {
         cursor: pointer;
     }
 
-    .chat {
-        flex: 1;
-        padding: 0 8px;
-        overflow-y: scroll;
-        background-color: rgba(0, 0, 0, 0.92);
-        
-
-        p {
-            border-radius: 20px;
-            width: 80%;
-            margin: 8px 0;
-            font-size: 16px;
-            padding: 16px;
-        }
-
-        div.model {
-
-            p {
-                background-color: var(--grey);
-            }
-
-            
-        }
-
-        div.user {
-            display: flex;
-            justify-content: flex-end;
-
-            p {
-                background-color: var(--blue);
-                color: white;
-            }
-        }
-
-        div.error {
-            p {
-                font-size: 14px;
-                text-align: center;
-                color: red;
-            }
-        }
-        
-    }
-
-    .input-area {
-        height: 70px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0 8px;
-        border-top: 1px solid lightgray;
-
-        input {
-            height: 40px;
-            flex: 1;
-            border: none;
-            background-color: var(--grey);
-            border-radius: 20px;
-            padding-left: 20px;
-            font-size: 16px;
-        }
-
-        button {
-            height: 40px;
-            width: 40px;
-            border-radius: 100%;
-            border: none;
-            margin-left: 12px;
-            background-color: var(--blue);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-
-            img {
-                width: 18px;
-            }
-
-            &:hover {
-                box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-            }
-        }
-    }
-
-
+.chat {
+    position: relative; /* Create a stacking context for the pseudo-element */
+    flex: 1;
+    padding: 0 8px;
+    overflow-y: auto;
+    /* The direct background is removed in favor of the pseudo-element */
+  }
+  
+  /* Pseudo-element for the chat background blur */
+  .chat::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Semi-transparent dark overlay */
+    background: rgba(0, 0, 0, 0.6);
+    /* Apply the blur effect */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: -1; 
+  }
+  
+  .chat p {
+    border-radius: 20px;
+    width: 80%;
+    margin: 8px 0;
+    font-size: 16px;
+    padding: 16px;
+  }
+  
+  .chat div.model p {
+    background-color: var(--grey);
+    color: #000; /* Adjust text color for contrast if needed */
+  }
+  
+  .chat div.user {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .chat div.user p {
+    background-color: var(--blue);
+    color: white;
+  }
+  
+  .chat div.error p {
+    font-size: 14px;
+    text-align: center;
+    color: red;
+  }
+  
+  /* Input Area Styles with Blurred Background */
+  .input-area {
+    position: relative; /* Create a stacking context for its pseudo-element */
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    /* Remove direct background color */
+  }
+  
+  /* Pseudo-element for the input area background blur */
+  .input-area::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: -1;
+  }
+  
+  .input-area input {
+    height: 40px;
+    flex: 1;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding-left: 20px;
+    font-size: 16px;
+    color: #fff;
+  }
+  
+  .input-area button {
+    height: 40px;
+    width: 40px;
+    border-radius: 100%;
+    border: none;
+    margin-left: 12px;
+    background-color: var(--blue);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .input-area button img {
+    width: 18px;
+  }
+  
+  .input-area button:hover {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  }
+  
 
 
 .loader {
     width: 40px;
     opacity: 0.4;
     aspect-ratio: 4;
-    background: radial-gradient(circle closest-side,#ffffff 90%,#0000) 0/calc(100%/3) 100% space;
+    background: radial-gradient(circle closest-side,#ffffff 90%,#00000000) 0/calc(100%/3) 100% space;
     clip-path: inset(0 100% 0 0);
     animation: l1 1.5s steps(4) infinite;
   }
