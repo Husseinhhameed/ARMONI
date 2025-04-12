@@ -19,6 +19,14 @@
   <!-- Responsive -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+spline-viewer::part(branding),
+spline-viewer div[slot="branding"] {
+  display: none !important;
+}
+  </style>
+
 </head>
 
 <body>
@@ -70,6 +78,20 @@
   </div>
 
   <!-- Scripts -->
+  <script>
+    const interval = setInterval(() => {
+      const viewer = document.querySelector('spline-viewer');
+      if (viewer && viewer.shadowRoot) {
+        const logo = viewer.shadowRoot.querySelector('#logo');
+        if (logo) {
+          logo.remove(); // Remove the logo element entirely
+          console.log("Spline watermark removed.");
+          clearInterval(interval);
+        }
+      }
+    }, 500);
+  </script>
+  
   <script src="assets/js/jquery.js"></script>
   <script src="assets/js/popper.min.js"></script>
   <script src="assets/js/bootstrap.min.js"></script>
