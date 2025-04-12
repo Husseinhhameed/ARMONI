@@ -1,3 +1,4 @@
+
 /* Contra Creative Agency Business HTML-5 Template */
 
 /************ TABLE OF CONTENTS ***************
@@ -26,6 +27,8 @@
 ====================================================================
 
  ***/
+
+ 
 
 .theme_color{
 	color:var(--main-color);
@@ -109,7 +112,7 @@
 }
 
 body {
-	font-family: 'Clash Display';
+	font-family: 'Ubuntu';
 	line-height:1.6em;
 	font-weight:400;
 	font-size:14px;
@@ -170,7 +173,7 @@ body {
 .handle-preloader .animation-preloader .txt-loading {
   text-align: center;
   user-select: none;
-  font-family: 'Clash Display';
+  font-family: 'Ubuntu';
 }
 
 .handle-preloader .animation-preloader .txt-loading .letters-loading:before{
@@ -181,7 +184,7 @@ body {
   opacity: 0;
   top:0;
   position: absolute;
-  font-family: 'Clash Display';
+  font-family: 'Ubuntu';
 }
 
 .handle-preloader .animation-preloader .txt-loading .letters-loading{
@@ -191,7 +194,7 @@ body {
   position: relative;
   font-size: 70px;
   line-height: 70px;
-  font-family: 'Clash Display';
+  font-family: 'Ubuntu';
   /* color: transparent;
   -webkit-text-stroke-width: 1px;
   
@@ -311,7 +314,7 @@ h1,h2,h3,h4,h5,h6 {
 	margin:0px;
 	background:none;
 	color:var(--color-four);
-	font-family: 'Clash Display';
+	font-family: 'Ubuntu';
 }
 
 input,button,select,textarea{
@@ -409,61 +412,9 @@ img{
 ::-ms-input-placeholder{color: inherit;}
 
 
-@font-face {
-    font-family: 'Clash Display';
-    src: url('ClashDisplay-Regular.eot');
-    src: url('../fonts/ClashDisplay-Regular.eot?#iefix') format('embedded-opentype'),
-        url('../fonts/ClashDisplay-Regular.woff2') format('woff2'),
-        url('../fonts/ClashDisplay-Regular.woff') format('woff'),
-        url('../fonts/ClashDisplay-Regular.ttf') format('truetype'),
-        url('../fonts/ClashDisplay-Regular.svg#ClashDisplay-Regular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
-
-@font-face {
-    font-family: 'Clash Display';
-    src: url('ClashDisplay-Medium.eot');
-    src: url('../fonts/ClashDisplay-Medium.eot?#iefix') format('embedded-opentype'),
-        url('../fonts/ClashDisplay-Medium.woff2') format('woff2'),
-        url('../fonts/ClashDisplay-Medium.woff') format('woff'),
-        url('../fonts/ClashDisplay-Medium.ttf') format('truetype'),
-        url('../fonts/ClashDisplay-Medium.svg#ClashDisplay-Medium') format('svg');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-
-
-@font-face {
-    font-family: 'Clash Display';
-    src: url('ClashDisplay-Semibold.eot');
-    src: url('../fonts/ClashDisplay-Semibold.eot?#iefix') format('embedded-opentype'),
-        url('../fonts/ClashDisplay-Semibold.woff2') format('woff2'),
-        url('../fonts/ClashDisplay-Semibold.woff') format('woff'),
-        url('../fonts/ClashDisplay-Semibold.ttf') format('truetype'),
-        url('../fonts/ClashDisplay-Semibold.svg#ClashDisplay-Semibold') format('svg');
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-}
 
 
 
-@font-face {
-    font-family: 'Clash Display';
-    src: url('ClashDisplay-Bold.eot');
-    src: url('../fonts/ClashDisplay-Bold.eot?#iefix') format('embedded-opentype'),
-        url('../fonts/ClashDisplay-Bold.woff2') format('woff2'),
-        url('../fonts/ClashDisplay-Bold.woff') format('woff'),
-        url('../fonts/ClashDisplay-Bold.ttf') format('truetype'),
-        url('../fonts/ClashDisplay-Bold.svg#ClashDisplay-Bold') format('svg');
-    font-weight: bold;
-    font-style: normal;
-    font-display: swap;
-}
 
 /* List Style One */
 
